@@ -9,42 +9,65 @@ import SwiftUI
 
 struct PokedexView: View {
     
-    @ObservedObject var viewModel = PokedexViewModel()
+    @StateObject var viewModel = PokedexViewModel.shared
+    @State var searchText = ""
     
     var body: some View {
         NavigationView {
             VStack {
-                ScrollView(showsIndicators: false) {
-                    ForEach(viewModel.pokemons) { pokemon in
-                        listItem(pokemon)
-                    }
+                Spacer()
+                    .frame(height: 280)
+                
+                VStack(spacing: 24) {
+                    search
+                    pokemonScroll
                 }
+                .padding(24)
+                .background(Color.white.cornerRadius(15))
+                .padding()
             }
-            .padding(.horizontal)
-            .onAppear {
-                viewModel.getPokemonList()
-            }
+            .background(background)
         }
     }
 }
 
 extension PokedexView {
-    func listItem(_ pokemon: PokemonIndex) -> some View {
-        NavigationLink {
-            PokemonDetailsView(viewModel: PokemonDetailsViewModel(pokemonIndex: pokemon))
-        } label: {
-            VStack {
-                HStack {
-                    Text(pokemon.name?.capitalized ?? "Quem é este pokemon?")
-                        .foregroundColor(.gray)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.black)
-                }
-                .padding(.vertical)
-                
-                Divider()
+    var search: some View {
+        HStack {
+            TextField("Pesquisar", text: $searchText)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+            Button {
+                searchText = ""
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.gray)
             }
+        }
+        .padding()
+        .background(
+            Capsule()
+                .stroke(.gray)
+        )
+    }
+    var pokemonScroll: some View {
+        ScrollView(showsIndicators: false) {
+            ForEach(viewModel.pokemons) { pokemon in
+                if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    PokemonListItem(pokemon: pokemon)
+                } else if let name = pokemon.name, name.lowercased().contains(searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()) {
+                    PokemonListItem(pokemon: pokemon)
+                }
+            }
+        }
+    }
+    var background: some View {
+        ZStack {
+            Color.black
+                .edgesIgnoringSafeArea(.vertical)
+            Image("pokedexBackground")
+                .resizable()
+                .scaledToFill()
         }
     }
 }
@@ -54,3 +77,5 @@ struct PokedexView_Previews: PreviewProvider {
         PokedexView()
     }
 }
+
+

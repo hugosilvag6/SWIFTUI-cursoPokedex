@@ -9,6 +9,12 @@ import SwiftUI
 
 class PokedexViewModel: ObservableObject {
     @Published var pokemons = [PokemonIndex]()
+    
+    static let shared = PokedexViewModel()
+    
+    private init() {
+        getPokemonList()
+    }
 }
 
 extension PokedexViewModel {

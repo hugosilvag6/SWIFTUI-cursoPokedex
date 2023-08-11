@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PokemonDetailsView: View {
     @ObservedObject var viewModel: PokemonDetailsViewModel
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack(spacing: 24) {
@@ -18,9 +19,8 @@ struct PokemonDetailsView: View {
                     .cornerRadius(50)
                     .edgesIgnoringSafeArea(.top)
                     .frame(height: 300)
-                    .overlay(
-                        image(pokemon)
-                    )
+                    .overlay(image(pokemon))
+                    .overlay(backButton, alignment: .topLeading)
                 
 
                 
@@ -68,6 +68,7 @@ struct PokemonDetailsView: View {
                 ProgressView()
             }
         }
+        .navigationBarHidden(true)
         .onAppear { viewModel.getPokemon() }
     }
 }
@@ -110,6 +111,17 @@ extension PokemonDetailsView {
                 .font(.title)
                 .fontWeight(.bold)
         }
+    }
+    var backButton: some View {
+        Button {
+            presentationMode.wrappedValue.dismiss()
+        } label: {
+            Image(systemName: "arrow.left")
+                .font(.title2)
+                .foregroundColor(.black)
+                .padding()
+        }
+
     }
 }
 
