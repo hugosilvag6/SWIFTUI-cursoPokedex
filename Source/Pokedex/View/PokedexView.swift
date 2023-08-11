@@ -18,13 +18,13 @@ struct PokedexView: View {
                 Spacer()
                     .frame(height: 280)
                 
-                VStack(spacing: 24) {
+                VStack {
                     search
                     pokemonScroll
                 }
                 .padding(24)
-                .background(Color.white.cornerRadius(15))
-                .padding()
+                .edgesIgnoringSafeArea(.bottom)
+                .background(Color.white.cornerRadius(30).edgesIgnoringSafeArea(.bottom))
             }
             .background(background)
         }
